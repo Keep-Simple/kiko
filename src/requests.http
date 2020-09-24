@@ -1,0 +1,38 @@
+POST http://localhost:8080/reserve
+Content-Type: application/json
+
+{
+"flatId": 1,
+"timeCell": 2,
+"tenantId": 47
+}
+
+###
+
+PATCH http://localhost:8080/cancel
+Content-Type: application/json
+
+{
+"flatId": 1,
+"timeCell": 2
+}
+
+###
+
+PATCH http://localhost:8080/reject
+Content-Type: application/json
+
+{
+  "flatId": 1,
+  "timeCell": 2
+}
+
+###
+
+PATCH http://localhost:8080/approve
+Content-Type: application/json
+
+{
+  "flatId": 1,
+  "timeCell": 2
+}
