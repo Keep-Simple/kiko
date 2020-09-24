@@ -1,8 +1,8 @@
 package com.kiko.models
 
 /*
- * viewSchedule represents time viewing slots
- * contains Reservation objects
+ * viewSchedule represents the time viewing slots
+ * & contains Reservation objects
  */
 class Flat(val currentTenantId: Int?) {
     private val viewSchedule = Array(10 * 3 * 7) { Reservation() }
@@ -12,24 +12,36 @@ class Flat(val currentTenantId: Int?) {
 
         if (tenantId != null || banned) return false
 
-        viewSchedule[timeCell].tenantId = newTenantId
+        synchronized(this) {
+            viewSchedule[timeCell].tenantId = newTenantId
+        }
         return true
     }
 
     fun cancelView(timeCell: Int) {
-        viewSchedule[timeCell].run {
-            tenantId = null
-            approved = false
+        synchronized(this) {
+            viewSchedule[timeCell].run {
+                tenantId = null
+                approved = false
+            }
         }
     }
 
-    fun rejectView(timeCell: Int) = viewSchedule[timeCell].apply {
-        approved = false
-        banned = true
-    }.tenantId
+    fun rejectView(timeCell: Int): Int? {
+        synchronized(this) {
+            return viewSchedule[timeCell].apply {
+                approved = false
+                banned = true
+            }.tenantId
+        }
+    }
 
-    fun approveView(timeCell: Int) = viewSchedule[timeCell].apply {
-        approved = true
-    }.tenantId
+    fun approveView(timeCell: Int): Int? {
+        synchronized(this) {
+            return viewSchedule[timeCell].apply {
+                approved = true
+            }.tenantId
+        }
+    }
 }
 
