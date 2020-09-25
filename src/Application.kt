@@ -14,20 +14,10 @@ import io.ktor.server.netty.*
 
 fun main() {
     val notificationService = NotificationService()
-    val flats = mutableMapOf(1 to Flat(1), 2 to Flat(2), 3 to Flat(2))
+    val flats = mutableMapOf(1 to Flat(1), 2 to Flat(2), 3 to Flat(3))
     val schedulerService = ViewSchedulerService(flats, notificationService)
 
     val server = embeddedServer(Netty, port = 8080) {
-        install(StatusPages) {
-            exception<Throwable> { cause ->
-                call.respondText("Broken request, try again")
-            }
-        }
-        install(ContentNegotiation) {
-            gson {
-                setPrettyPrinting()
-            }
-        }
         routing {
             post("/reserve") {
                 if (schedulerService.reserve(call.receive()))
@@ -47,8 +37,10 @@ fun main() {
                 schedulerService.approveReservation(call.receive())
                 call.respondText("Reservation approved")
             }
-            get("/") {
-                call.respondText("Hello from Ktor Testable sample application")
+        }
+        install(ContentNegotiation) {
+            gson {
+                setPrettyPrinting()
             }
         }
     }

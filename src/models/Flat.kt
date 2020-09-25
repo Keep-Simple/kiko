@@ -5,7 +5,7 @@ package com.kiko.models
  * & contains Reservation objects
  */
 class Flat(val currentTenantId: Int?) {
-    private val viewSchedule = Array(10 * 3 * 7) { Reservation() }
+    val viewSchedule = Array(10 * 3 * 7) { Reservation() }
 
     fun reserveView(timeCell: Int, newTenantId: Int): Boolean {
         val (tenantId, _, banned) = viewSchedule[timeCell]
@@ -18,30 +18,32 @@ class Flat(val currentTenantId: Int?) {
         return true
     }
 
-    fun cancelView(timeCell: Int) {
-        synchronized(this) {
-            viewSchedule[timeCell].run {
-                tenantId = null
-                approved = false
-            }
+    fun cancelView(timeCell: Int) = synchronized(this) {
+        viewSchedule[timeCell].run {
+            tenantId = null
+            approved = false
         }
     }
 
-    fun rejectView(timeCell: Int): Int? {
-        synchronized(this) {
-            return viewSchedule[timeCell].apply {
+    fun rejectView(timeCell: Int): Int? = synchronized(this) {
+        viewSchedule[timeCell]
+            .takeIf { it.tenantId != null }
+            ?.apply {
                 approved = false
                 banned = true
-            }.tenantId
-        }
+                tenantId = null
+            }
+            ?.tenantId
     }
 
-    fun approveView(timeCell: Int): Int? {
-        synchronized(this) {
-            return viewSchedule[timeCell].apply {
+    fun approveView(timeCell: Int): Int? = synchronized(this) {
+        viewSchedule[timeCell]
+            .takeIf { it.tenantId != null }
+            ?.apply {
                 approved = true
-            }.tenantId
-        }
+                banned = false
+            }
+            ?.tenantId
     }
 }
 
