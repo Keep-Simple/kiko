@@ -5,7 +5,7 @@ package com.kiko.models
  * & contains Reservation objects
  */
 class Flat(val currentTenantId: Int?) {
-    val viewSchedule = Array(10 * 3 * 7) { Reservation() }
+    val viewSchedule = Array(11 * 3 * 7) { Reservation() }
 
     fun reserveView(timeCell: Int, newTenantId: Int): Boolean {
         val (tenantId, _, banned) = viewSchedule[timeCell]
@@ -15,6 +15,7 @@ class Flat(val currentTenantId: Int?) {
         synchronized(this) {
             viewSchedule[timeCell].tenantId = newTenantId
         }
+
         return true
     }
 

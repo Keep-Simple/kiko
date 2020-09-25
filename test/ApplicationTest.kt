@@ -24,6 +24,17 @@ class ApplicationTest {
     }
 
     @Test
+    fun testConcurrentReservation() {
+        val flat = Flat(3)
+        runBlocking {
+            val firstRes = async { flat.reserveView(8, 1) }
+            val secondRes = async { flat.reserveView(8, 2) }
+            assertTrue(firstRes.await())
+            assertFalse(secondRes.await())
+        }
+    }
+
+    @Test
     fun testReserveCancellation() {
         Flat(2).run {
             reserveView(0, 48)
@@ -37,20 +48,9 @@ class ApplicationTest {
     }
 
     @Test
-    fun testConcurrentReservation() {
-        val flat = Flat(3)
-        runBlocking {
-            val firstRes = async { flat.reserveView(8, 1) }
-            val secondRes = async { flat.reserveView(8, 2) }
-            assertTrue(firstRes.await())
-            assertFalse(secondRes.await())
-        }
-    }
-
-    @Test
     fun testServiceReserve() {
         val notificationService = NotificationService()
-        val flats = mutableMapOf(1 to Flat(1), 2 to Flat(2), 3 to Flat(2))
+        val flats = mapOf(1 to Flat(1), 2 to Flat(2), 3 to Flat(2))
         val service = ViewSchedulerService(flats, notificationService)
 
         service.run {

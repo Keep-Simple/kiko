@@ -14,7 +14,7 @@ import io.ktor.server.netty.*
 
 fun main() {
     val notificationService = NotificationService()
-    val flats = mutableMapOf(1 to Flat(1), 2 to Flat(2), 3 to Flat(3))
+    val flats = mapOf(1 to Flat(1), 2 to Flat(2), 3 to Flat(3))
     val schedulerService = ViewSchedulerService(flats, notificationService)
 
     val server = embeddedServer(Netty, port = 8080) {
@@ -25,17 +25,21 @@ fun main() {
                 else
                     call.respondText("Reservation isn't possible")
             }
+            patch("/reject") {
+                if (schedulerService.rejectReservation(call.receive()))
+                    call.respondText("Reservation rejected")
+                else
+                    call.respondText("Rejecting failed")
+            }
+            patch("/approve") {
+                if (schedulerService.approveReservation(call.receive()))
+                    call.respondText("Reservation approved")
+                else
+                    call.respondText("Approving failed")
+            }
             patch("/cancel") {
                 schedulerService.cancelReservation(call.receive())
                 call.respondText("Reservation cancelled")
-            }
-            patch("/reject") {
-                schedulerService.rejectReservation(call.receive())
-                call.respondText("Reservation rejected")
-            }
-            patch("/approve") {
-                schedulerService.approveReservation(call.receive())
-                call.respondText("Reservation approved")
             }
         }
         install(ContentNegotiation) {

@@ -2,9 +2,9 @@ POST http://localhost:8080/reserve
 Content-Type: application/json
 
 {
-"flatId": 1,
-"timeCell": 2,
-"tenantId": 47
+  "flatId": 1,
+  "timeCell": 2,
+  "tenantId": 47
 }
 
 ###
@@ -23,8 +23,8 @@ PATCH http://localhost:8080/cancel
 Content-Type: application/json
 
 {
-"flatId": 1,
-"timeCell": 2
+  "flatId": 1,
+  "timeCell": 2
 }
 
 ###
