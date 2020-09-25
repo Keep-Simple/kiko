@@ -1,5 +1,7 @@
 package com.kiko.services
 
+import ReserveDto
+import ReserveShortDto
 import com.kiko.models.Flat
 
 class ViewSchedulerService(
@@ -7,7 +9,8 @@ class ViewSchedulerService(
     private val notificationService: NotificationService
 ) {
 
-    fun reserve(flatId: Int, timeCell: Int, tenantId: Int): Boolean {
+    fun reserve(dto: ReserveDto): Boolean {
+        val (tenantId, flatId, timeCell) = dto
         val flat = flats[flatId]
         if (flat != null && tenantId != flat.currentTenantId && flat.reserveView(timeCell, tenantId)) {
             notificationService.notifyTenantOfReservation(timeCell, tenantId, flatId)
@@ -16,21 +19,24 @@ class ViewSchedulerService(
         return false;
     }
 
-    fun cancelReservation(flatId: Int, timeCell: Int) {
+    fun cancelReservation(dto: ReserveShortDto) {
+        val (flatId, timeCell) = dto
         flats[flatId]?.run {
             cancelView(timeCell)
             notificationService.notifyTenantOfCancellation(timeCell, flatId, currentTenantId)
         }
     }
 
-    fun rejectReservation(flatId: Int, timeCell: Int) {
+    fun rejectReservation(dto: ReserveShortDto) {
+        val (flatId, timeCell) = dto
         flats[flatId]?.run {
             val tenantId = rejectView(timeCell)
             notificationService.notifyNewTenantOfViewStatus(timeCell, tenantId, flatId, false)
         }
     }
 
-    fun approveReservation(flatId: Int, timeCell: Int) {
+    fun approveReservation(dto: ReserveShortDto) {
+        val (flatId, timeCell) = dto
         flats[flatId]?.run {
             val tenantId = approveView(timeCell)
             notificationService.notifyNewTenantOfViewStatus(timeCell, tenantId, flatId, true)

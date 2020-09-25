@@ -1,7 +1,5 @@
 package com.kiko
 
-import ReserveDto
-import ReserveShortDto
 import com.kiko.models.Flat
 import com.kiko.services.NotificationService
 import com.kiko.services.ViewSchedulerService
@@ -32,27 +30,25 @@ fun main() {
         }
         routing {
             post("/reserve") {
-                val (tenantId, flatId, timeCell) = call.receive<ReserveDto>()
-
-                if (schedulerService.reserve(flatId, timeCell, tenantId))
+                if (schedulerService.reserve(call.receive()))
                     call.respondText("Reserved Successfully")
                 else
                     call.respondText("Reservation isn't possible")
             }
             patch("/cancel") {
-                val (flatId, timeCell) = call.receive<ReserveShortDto>()
-                schedulerService.cancelReservation(flatId, timeCell)
+                schedulerService.cancelReservation(call.receive())
                 call.respondText("Reservation cancelled")
             }
             patch("/reject") {
-                val (flatId, timeCell) = call.receive<ReserveShortDto>()
-                schedulerService.rejectReservation(flatId, timeCell)
+                schedulerService.rejectReservation(call.receive())
                 call.respondText("Reservation rejected")
             }
             patch("/approve") {
-                val (flatId, timeCell) = call.receive<ReserveShortDto>()
-                schedulerService.approveReservation(flatId, timeCell)
+                schedulerService.approveReservation(call.receive())
                 call.respondText("Reservation approved")
+            }
+            get("/") {
+                call.respondText("Hello from Ktor Testable sample application")
             }
         }
     }
