@@ -9,43 +9,38 @@ import TimeSlot
 class Flat(val currentTenantId: Int?) {
     val schedule = ViewSchedule()
 
+    @Synchronized
     fun reserveView(timeSlot: TimeSlot, newTenantId: Int): Boolean {
         schedule.get(timeSlot)?.run {
             if (tenantId == null && !banned) {
-                synchronized(this) {
-                    this.tenantId = newTenantId
-                }
+                this.tenantId = newTenantId
                 return true
             }
         }
         return false
     }
 
-    fun cancelView(timeSlot: TimeSlot) = synchronized(this) {
-        schedule.get(timeSlot)?.apply {
+    @Synchronized
+    fun rejectView(timeSlot: TimeSlot) = schedule.get(timeSlot)
+        ?.takeIf { it.tenantId != null }
+        ?.apply {
+            approved = false
+            banned = true
+        }?.tenantId
+
+    @Synchronized
+    fun approveView(timeSlot: TimeSlot) = schedule.get(timeSlot)
+        ?.takeIf { it.tenantId != null }
+        ?.apply {
+            approved = true
+            banned = false
+        }?.tenantId
+
+    @Synchronized
+    fun cancelView(timeSlot: TimeSlot) = schedule.get(timeSlot)
+        ?.apply {
             tenantId = null
             approved = false
         }
-    }
-
-    fun rejectView(timeSlot: TimeSlot): Int? = synchronized(this) {
-        schedule.get(timeSlot)
-            ?.takeIf { it.tenantId != null }
-            ?.apply {
-                approved = false
-                banned = true
-            }
-            ?.tenantId
-    }
-
-    fun approveView(timeSlot: TimeSlot): Int? = synchronized(this) {
-        schedule.get(timeSlot)
-            ?.takeIf { it.tenantId != null }
-            ?.apply {
-                approved = true
-                banned = false
-            }
-            ?.tenantId
-    }
 }
 
