@@ -21,7 +21,7 @@ class ViewSchedule {
         }
     }
 
-    fun get(timeSlot: TimeSlot) = schedule[timeSlot.day * 33 + timeSlot.slot].takeIf { getDiff() < 1000 * 3600 * 24 }
+    fun get(timeSlot: TimeSlot) = schedule[timeSlot.day * 33 + timeSlot.slot].takeIf { getDiff() >= 1000 * 3600 * 24 }
 
     private fun getDiff() =
         createDate.atZone(ZoneId.systemDefault()).toEpochSecond() * 1000 - Calendar.getInstance().timeInMillis
