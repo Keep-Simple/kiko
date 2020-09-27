@@ -22,7 +22,7 @@ class Flat(val currentTenantId: Int?) {
     }
 
     fun cancelView(timeSlot: TimeSlot) = synchronized(this) {
-        schedule.get(timeSlot)?.run {
+        schedule.get(timeSlot)?.apply {
             tenantId = null
             approved = false
         }
@@ -34,7 +34,6 @@ class Flat(val currentTenantId: Int?) {
             ?.apply {
                 approved = false
                 banned = true
-                tenantId = null
             }
             ?.tenantId
     }

@@ -21,12 +21,15 @@ class ViewSchedulerService(
         return false
     }
 
-    fun cancelReservation(dto: ReserveShortDto) {
+    fun cancelReservation(dto: ReserveShortDto): Boolean {
         val (flatId, timeSlot) = dto
         flats[flatId]?.run {
-            cancelView(timeSlot)
-            notificationService.notifyTenantOfCancellation(timeSlot, flatId, currentTenantId)
+            cancelView(timeSlot)?.let {
+                notificationService.notifyTenantOfCancellation(timeSlot, flatId, currentTenantId)
+                return true
+            }
         }
+        return false
     }
 
     fun rejectReservation(dto: ReserveShortDto): Boolean {

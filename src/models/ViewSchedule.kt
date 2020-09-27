@@ -25,6 +25,6 @@ class ViewSchedule {
         val current = Calendar.getInstance().timeInMillis
         val diff = current - createDate.atZone(ZoneId.systemDefault()).toEpochSecond() * 1000
 
-        return schedule[timeSlot.day * 7 + timeSlot.slot].takeIf { diff < 1000 * 3600 * 24 }
+        return schedule[timeSlot.day * 33 + timeSlot.slot].takeIf { diff < 1000 * 3600 * 24 }
     }
 }
