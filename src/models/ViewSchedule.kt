@@ -14,7 +14,7 @@ class ViewSchedule {
 
     init {
         fixedRateTimer(
-            initialDelay = createDate.atZone(ZoneId.systemDefault()).toEpochSecond() * 1000,
+            initialDelay = getMillis() - currentTime(),
             period = 1000 * 60 * 60 * 24 * 7
         ) {
             schedule = Array(11 * 3 * 7) { Reservation() }
@@ -22,9 +22,10 @@ class ViewSchedule {
     }
 
     fun get(timeSlot: TimeSlot): Reservation? {
-        val current = Calendar.getInstance().timeInMillis
-        val diff = current - createDate.atZone(ZoneId.systemDefault()).toEpochSecond() * 1000
-
+        val diff = currentTime() - getMillis()
         return schedule[timeSlot.day * 33 + timeSlot.slot].takeIf { diff < 1000 * 3600 * 24 }
     }
+
+    private fun currentTime() = Calendar.getInstance().timeInMillis
+    private fun getMillis() = createDate.atZone(ZoneId.systemDefault()).toEpochSecond() * 1000
 }
