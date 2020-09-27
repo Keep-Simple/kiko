@@ -3,8 +3,11 @@ Content-Type: application/json
 
 {
   "flatId": 1,
-  "timeCell": 2,
-  "tenantId": 47
+  "tenantId": 47,
+  "timeSlot": {
+    "day": 1,
+    "slot": 2
+  }
 }
 
 ###
@@ -14,7 +17,10 @@ Content-Type: application/json
 
 {
   "flatId": 1,
-  "timeCell": 2
+  "timeSlot": {
+    "day": 1,
+    "slot": 2
+  }
 }
 
 ###
@@ -24,7 +30,10 @@ Content-Type: application/json
 
 {
   "flatId": 1,
-  "timeCell": 2
+  "timeSlot": {
+    "day": 1,
+    "slot": 2
+  }
 }
 
 ###
@@ -33,7 +42,10 @@ Content-Type: application/json
 
 {
   "flatId": 2,
-  "timeCell": 1,
+  "timeSlot": {
+    "day": 1,
+    "slot": 1
+  },
   "tenantId": 32
 }
 
@@ -44,6 +56,9 @@ Content-Type: application/json
 
 {
   "flatId": 2,
-  "timeCell": 1
+  "timeSlot": {
+    "day": 1,
+    "slot": 1
+  }
 }
 

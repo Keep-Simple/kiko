@@ -1,12 +1,14 @@
 package com.kiko.services
 
+import TimeSlot
+
 class NotificationService {
-    fun notifyTenantOfReservation(timeCell: Int, tenantId: Int, flatId: Int) =
-        println("[Notification] timeCell: $timeCell in flat: $flatId reserved")
+    fun notifyTenantOfReservation(timeSlot: TimeSlot, tenantId: Int, flatId: Int) =
+        println("[Notification] timeSlot: $timeSlot in flat: $flatId reserved")
 
-    fun notifyNewTenantOfViewStatus(timeCell: Int, tenantId: Int?, flatId: Int, approved: Boolean) =
-        println("[Notification] reservation for tenant: $tenantId in flat: $flatId & timeCell: $timeCell with status: $approved")
+    fun notifyNewTenantOfViewStatus(timeSlot: TimeSlot, tenantId: Int?, flatId: Int, approved: Boolean) =
+        println("[Notification] reservation for tenant: $tenantId in flat: $flatId & timeSlot: $timeSlot with status: $approved")
 
-    fun notifyTenantOfCancellation(timeCell: Int, flatId: Int, tenantId: Int?) =
-        println("[Notification] reservation cancelled for flat: $flatId with timeCell: $timeCell")
+    fun notifyTenantOfCancellation(timeSlot: TimeSlot, flatId: Int, tenantId: Int?) =
+        println("[Notification] reservation cancelled for flat: $flatId with timeSlot: $timeSlot")
 }

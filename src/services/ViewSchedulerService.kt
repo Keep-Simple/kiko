@@ -9,12 +9,12 @@ class ViewSchedulerService(
     private val notificationService: NotificationService
 ) {
     fun reserve(dto: ReserveDto): Boolean {
-        val (tenantId, flatId, timeCell) = dto
+        val (flatId, timeSlot, tenantId) = dto
         flats[flatId]
             ?.takeIf { tenantId != it.currentTenantId }
             ?.run {
-                if (reserveView(timeCell, tenantId)) {
-                    notificationService.notifyTenantOfReservation(timeCell, tenantId, flatId)
+                if (reserveView(timeSlot, tenantId)) {
+                    notificationService.notifyTenantOfReservation(timeSlot, tenantId, flatId)
                     return true
                 }
             }
@@ -22,18 +22,18 @@ class ViewSchedulerService(
     }
 
     fun cancelReservation(dto: ReserveShortDto) {
-        val (flatId, timeCell) = dto
+        val (flatId, timeSlot) = dto
         flats[flatId]?.run {
-            cancelView(timeCell)
-            notificationService.notifyTenantOfCancellation(timeCell, flatId, currentTenantId)
+            cancelView(timeSlot)
+            notificationService.notifyTenantOfCancellation(timeSlot, flatId, currentTenantId)
         }
     }
 
     fun rejectReservation(dto: ReserveShortDto): Boolean {
-        val (flatId, timeCell) = dto
+        val (flatId, timeSlot) = dto
         flats[flatId]?.run {
-            rejectView(timeCell)?.let {
-                notificationService.notifyNewTenantOfViewStatus(timeCell, it, flatId, false)
+            rejectView(timeSlot)?.let {
+                notificationService.notifyNewTenantOfViewStatus(timeSlot, it, flatId, false)
                 return true
             }
         }
@@ -41,10 +41,10 @@ class ViewSchedulerService(
     }
 
     fun approveReservation(dto: ReserveShortDto): Boolean {
-        val (flatId, timeCell) = dto
+        val (flatId, timeSlot) = dto
         flats[flatId]?.run {
-            approveView(timeCell)?.let {
-                notificationService.notifyNewTenantOfViewStatus(timeCell, it, flatId, true)
+            approveView(timeSlot)?.let {
+                notificationService.notifyNewTenantOfViewStatus(timeSlot, it, flatId, true)
                 return true
             }
         }

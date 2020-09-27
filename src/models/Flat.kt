@@ -1,34 +1,36 @@
 package com.kiko.models
 
+import TimeSlot
+
 /*
- * viewSchedule represents the time viewing slots
+ * schedule represents the time viewing slots
  * & contains Reservation objects
  */
 class Flat(val currentTenantId: Int?) {
-    val viewSchedule = Array(11 * 3 * 7) { Reservation() }
+    val schedule = ViewSchedule()
 
-    fun reserveView(timeCell: Int, newTenantId: Int): Boolean {
-        val (tenantId, _, banned) = viewSchedule[timeCell]
-
-        if (tenantId != null || banned) return false
-
-        synchronized(this) {
-            viewSchedule[timeCell].tenantId = newTenantId
+    fun reserveView(timeSlot: TimeSlot, newTenantId: Int): Boolean {
+        schedule.get(timeSlot)?.run {
+            if (tenantId == null && !banned) {
+                synchronized(this) {
+                    this.tenantId = newTenantId
+                }
+                return true
+            }
         }
-
-        return true
+        return false
     }
 
-    fun cancelView(timeCell: Int) = synchronized(this) {
-        viewSchedule[timeCell].run {
+    fun cancelView(timeSlot: TimeSlot) = synchronized(this) {
+        schedule.get(timeSlot)?.run {
             tenantId = null
             approved = false
         }
     }
 
-    fun rejectView(timeCell: Int): Int? = synchronized(this) {
-        viewSchedule[timeCell]
-            .takeIf { it.tenantId != null }
+    fun rejectView(timeSlot: TimeSlot): Int? = synchronized(this) {
+        schedule.get(timeSlot)
+            ?.takeIf { it.tenantId != null }
             ?.apply {
                 approved = false
                 banned = true
@@ -37,9 +39,9 @@ class Flat(val currentTenantId: Int?) {
             ?.tenantId
     }
 
-    fun approveView(timeCell: Int): Int? = synchronized(this) {
-        viewSchedule[timeCell]
-            .takeIf { it.tenantId != null }
+    fun approveView(timeSlot: TimeSlot): Int? = synchronized(this) {
+        schedule.get(timeSlot)
+            ?.takeIf { it.tenantId != null }
             ?.apply {
                 approved = true
                 banned = false
